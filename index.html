@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>Đặt vé máy bay</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 30px; }
+    body { font-family: Arial, sans-serif; margin: 30px;display: flex;
+     
+  justify-content: center; /* căn giữa theo **ngang** */
+  align-items: center;     /* căn giữa theo **dọc** */ }
     .form-group { margin: 12px 0; }
     label { margin-right: 10px; }
     input, select { padding: 5px; }
@@ -21,6 +24,7 @@
   </style>
 </head>
 <body>
+  <div>
   <h2>Đặt vé máy bay</h2>
 
   <form id="flightForm">
@@ -70,7 +74,7 @@
 
     <button type="submit">Tìm chuyến bay</button>
   </form>
-
+</div>
   <script>
     const form = document.getElementById("flightForm");
     const radios = document.querySelectorAll("input[name='tripkind']");
