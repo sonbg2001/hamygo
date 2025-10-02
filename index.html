@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đặt vé máy bay</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    .form-group { margin: 12px 0; }
+    label { margin-right: 10px; }
+    input, select { padding: 5px; }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #005ea0; }
+  </style>
+</head>
+<body>
+  <h2>Đặt vé máy bay</h2>
+
+  <form id="flightForm">
+    <!-- Chọn loại vé -->
+    <div class="form-group">
+      <label><input type="radio" name="tripkind" value="1" checked> Một chiều</label>
+      <label><input type="radio" name="tripkind" value="2"> Khứ hồi</label>
+    </div>
+
+    <!-- Chọn điểm đi và đến -->
+    <div class="form-group">
+      <label>Điểm xuất phát:
+        <select id="depcity">
+          <option value="TPE">Đài Bắc (TPE)</option>
+          <option value="RMQ">Đài Trung (RMQ)</option>
+          <option value="TNN">Đài Nam (TNN)</option>
+          <option value="HAN">Hà Nội (HAN)</option>
+          <option value="SGN">TP.HCM (SGN)</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label>Điểm đến:
+        <select id="arrcity">
+          <option value="TPE">Đài Bắc (TPE)</option>
+          <option value="RMQ">Đài Trung (RMQ)</option>
+          <option value="TNN">Đài Nam (TNN)</option>
+          <option value="HAN">Hà Nội (HAN)</option>
+          <option value="SGN">TP.HCM (SGN)</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- Ngày đi / Ngày về -->
+    <div class="form-group">
+      <label>Ngày đi:
+        <input type="date" id="depdate1" lang="vi" required>
+      </label>
+    </div>
+
+    <div class="form-group" id="returnDateWrapper" style="display:none;">
+      <label>Ngày về:
+        <input type="date" id="depdate2" lang="vi">
+      </label>
+    </div>
+
+    <button type="submit">Tìm chuyến bay</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("flightForm");
+    const radios = document.querySelectorAll("input[name='tripkind']");
+    const returnDateWrapper = document.getElementById("returnDateWrapper");
+
+    // Ẩn/hiện ngày về
+    radios.forEach(radio => {
+      radio.addEventListener("change", () => {
+        if (radio.value === "2" && radio.checked) {
+          returnDateWrapper.style.display = "block";
+        } else if (radio.value === "1" && radio.checked) {
+          returnDateWrapper.style.display = "none";
+        }
+      });
+    });
+
+    // Hàm đổi định dạng yyyy-mm-dd -> yyyy/mm/dd
+    function formatDate(dateStr) {
+      if (!dateStr) return "";
+      const [yyyy, mm, dd] = dateStr.split("-");
+      return `${yyyy}/${mm}/${dd}`;
+    }
+
+    // Xử lý submit
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      let depcity = document.getElementById("depcity").value;
+      let arrcity = document.getElementById("arrcity").value;
+      let depdate1 = formatDate(document.getElementById("depdate1").value);
+      let depdate2 = formatDate(document.getElementById("depdate2").value);
+      let tripkind = document.querySelector("input[name='tripkind']:checked").value;
+
+      let url = "https://www.hamygo.com/Flight/Query?";
+
+      if (tripkind === "1") {
+        url += `depcity=${depcity}&arrcity=${arrcity}&depdate=${depdate1}&product=1&adt=1&chd=0&inf=0&tripkind=1&trips=1`;
+      } else {
+        url += `depcity=${depcity},${arrcity}&arrcity=${arrcity},${depcity}&depdate=${depdate1},${depdate2}&product=1&adt=1&chd=0&inf=0&tripkind=2&trips=2`;
+      }
+
+      window.open(url, "_blank");
+    });
+  </script>
+</body>
+</html>
