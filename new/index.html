@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đặt vé máy bay</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: #f0f4f8;
+    }
+    .container {
+      width: 720px;
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    h2 { margin-bottom: 20px; }
+    .form-group { margin: 12px 0; }
+    label { display: block; margin-bottom: 4px; font-weight: bold; }
+    select, input[type="date"], input[type="number"] {
+      padding: 6px 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      height: 38px;
+    }
+
+    /* Hàng ngang */
+    .inline-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .inline-group .form-group { flex: 1; margin-bottom: 0; }
+
+    /* Swap button cân đối */
+    .swap-btn {
+      padding: 0 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      height: 38px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      transition: 0.3s;
+    }
+    .swap-btn:hover { background-color: #0056b3; }
+
+    button.submit-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button.submit-btn:hover { background-color: #1e7e34; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Đặt vé máy bay</h2>
+  <form id="flightForm">
+
+    <!-- Loại vé -->
+    <div class="form-group">
+      <label>Loại vé</label>
+      <label><input type="radio" name="tripkind" value="1" checked> Một chiều</label>
+      <label><input type="radio" name="tripkind" value="2"> Khứ hồi</label>
+    </div>
+
+    <!-- Điểm xuất phát + đổi + điểm đến -->
+    <div class="inline-group">
+      <div class="form-group">
+        <label>Điểm xuất phát</label>
+        <select id="depcity">
+          <option value="TPE">Đài Bắc (TPE)</option>
+          <option value="DAD">Đà Nẵng (DAD)</option>
+          <option value="RMQ">Đài Trung (RMQ)</option>
+          <option value="KHH">Cao Hùng (KHH)</option>
+          <option value="HAN">Hà Nội (HAN)</option>
+          <option value="SGN">TP.HCM (SGN)</option>
+        </select>
+      </div>
+
+      <button type="button" class="swap-btn" id="swapBtn">↔</button>
+
+      <div class="form-group">
+        <label>Điểm đến</label>
+        <select id="arrcity">
+          <option value="TPE">Đài Bắc (TPE)</option>
+          <option value="DAD">Đà Nẵng (DAD)</option>
+          <option value="RMQ">Đài Trung (RMQ)</option>
+          <option value="KHH">Cao Hùng (KHH)</option>
+          <option value="HAN">Hà Nội (HAN)</option>
+          <option value="SGN">TP.HCM (SGN)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Ngày đi + ngày về -->
+    <div class="inline-group">
+      <div class="form-group">
+        <label>Ngày đi</label>
+        <input type="date" id="depdate1" lang="vi" required>
+      </div>
+
+      <div class="form-group" id="returnDateWrapper" style="display:none;">
+        <label>Ngày về</label>
+        <input type="date" id="depdate2" lang="vi">
+      </div>
+    </div>
+
+    <!-- Thông tin vé + hành khách -->
+    <div class="inline-group">
+      <div class="form-group">
+        <label>Thông tin vé</label>
+        <select id="ticketType">
+          <option value="worker">Vé lao động nước ngoài</option>
+          <option value="vietnamese">Vé người Việt Nam</option>
+          <option value="regular">Vé phổ thông</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Người lớn</label>
+        <input type="number" id="adult" value="1" min="1">
+      </div>
+      <div class="form-group">
+        <label>Trẻ em</label>
+        <input type="number" id="child" value="0" min="0">
+      </div>
+      <div class="form-group">
+        <label>Em bé</label>
+        <input type="number" id="infant" value="0" min="0">
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Tìm chuyến bay</button>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById("flightForm");
+  const radios = document.querySelectorAll("input[name='tripkind']");
+  const returnDateWrapper = document.getElementById("returnDateWrapper");
+
+  radios.forEach(radio => {
+    radio.addEventListener("change", () => {
+      returnDateWrapper.style.display = (radio.value === "2" && radio.checked) ? "block" : "none";
+    });
+  });
+
+  // Swap điểm đi/đến
+  document.getElementById("swapBtn").addEventListener("click", () => {
+    const depcity = document.getElementById("depcity");
+    const arrcity = document.getElementById("arrcity");
+    [depcity.value, arrcity.value] = [arrcity.value, depcity.value];
+  });
+
+  // Chuyển yyyy-mm-dd -> yyyy/mm/dd
+  function formatDateForHamyGo(dateStr) {
+    if(!dateStr) return "";
+    return dateStr.replace(/-/g,'/');
+  }
+
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const depcity = document.getElementById("depcity").value;
+    const arrcity = document.getElementById("arrcity").value;
+    const depdate1 = formatDateForHamyGo(document.getElementById("depdate1").value);
+    const depdate2 = formatDateForHamyGo(document.getElementById("depdate2").value);
+    const tripkind = document.querySelector("input[name='tripkind']:checked").value;
+    const adult = document.getElementById("adult").value;
+    const child = document.getElementById("child").value;
+    const infant = document.getElementById("infant").value;
+
+    // map ticketType -> product
+    const ticketType = document.getElementById("ticketType").value;
+    let product = 1;
+    if(ticketType === "worker") product = 1;
+    else if(ticketType === "vietnamese") product = 2;
+    else if(ticketType === "regular") product = 4;
+
+    if(!depdate1 || (tripkind==="2" && !depdate2)) {
+      alert("Vui lòng chọn ngày hợp lệ");
+      return;
+    }
+
+    let url = "https://www.hamygo.com/Flight/Query?";
+    if(tripkind==="1") {
+      url += `depcity=${depcity}&arrcity=${arrcity}&depdate=${depdate1}&product=${product}&adt=${adult}&chd=${child}&inf=${infant}&tripkind=1&trips=1`;
+    } else {
+      url += `depcity=${depcity},${arrcity}&arrcity=${arrcity},${depcity}&depdate=${depdate1},${depdate2}&product=${product}&adt=${adult}&chd=${child}&inf=${infant}&tripkind=2&trips=2`;
+    }
+
+    window.open(url,"_blank");
+  });
+
+  // Gán ngày mặc định là hôm nay
+  window.addEventListener("DOMContentLoaded", ()=>{
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth()+1).padStart(2,'0');
+    const dd = String(today.getDate()).padStart(2,'0');
+    document.getElementById("depdate1").value = `${yyyy}-${mm}-${dd}`;
+    document.getElementById("depdate2").value = `${yyyy}-${mm}-${dd}`;
+  });
+</script>
+
+</body>
+</html>
